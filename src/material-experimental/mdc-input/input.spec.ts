@@ -542,7 +542,9 @@ describe('MatMdcInput without forms', () => {
     fixture.componentInstance.formControl.markAsTouched();
     fixture.componentInstance.formControl.setErrors({invalid: true});
     fixture.detectChanges();
-    expect(input.getAttribute('aria-describedby')).toMatch(/^custom-error mat-mdc-error-\d+$/);
+    expect(input.getAttribute('aria-describedby')).toMatch(
+      /^custom-error mat-mdc-hint-\d+ mat-mdc-error-\d+$/,
+    );
 
     fixture.componentInstance.label = '';
     fixture.componentInstance.userDescribedByValue = '';
@@ -1094,7 +1096,16 @@ describe('MatMdcInput with forms', () => {
       expect(containerEl.querySelectorAll('mat-error').length)
         .withContext('Expected one error message to have been rendered.')
         .toBe(1);
-      expect(containerEl.querySelectorAll('mat-hint').length)
+      let hintWrapper = containerEl.querySelector('.mat-mdc-form-field-hint-wrapper') as Element;
+      expect(hintWrapper.classList)
+        .withContext('Expected hint wrapper to not have active class.')
+        .not.toContain('mat-mdc-form-field-hint-wrapper-active');
+      expect(getComputedStyle(hintWrapper).display)
+        .withContext('Expected hint wrapper to not be displayed.')
+        .toBe('none');
+      expect(
+        containerEl.querySelectorAll('.mat-mdc-form-field-hint-wrapper-active mat-hint').length,
+      )
         .withContext('Expected no hints to be shown.')
         .toBe(0);
 
@@ -1109,7 +1120,16 @@ describe('MatMdcInput with forms', () => {
       expect(containerEl.querySelectorAll('mat-error').length)
         .withContext('Expected no error messages when the input is valid.')
         .toBe(0);
-      expect(containerEl.querySelectorAll('mat-hint').length)
+      hintWrapper = containerEl.querySelector('.mat-mdc-form-field-hint-wrapper') as Element;
+      expect(hintWrapper.classList)
+        .withContext('Expected hint wrapper to have active class.')
+        .toContain('mat-mdc-form-field-hint-wrapper-active');
+      expect(getComputedStyle(hintWrapper).display)
+        .withContext('Expected hint wrapper to be displayed.')
+        .not.toBe('none');
+      expect(
+        containerEl.querySelectorAll('.mat-mdc-form-field-hint-wrapper-active mat-hint').length,
+      )
         .withContext('Expected one hint to be shown once the input is valid.')
         .toBe(1);
     }));
@@ -1138,7 +1158,7 @@ describe('MatMdcInput with forms', () => {
       expect(containerEl.querySelector('mat-error')!.getAttribute('aria-live')).toBe('polite');
     }));
 
-    it('sets the aria-describedby to reference errors when in error state', fakeAsync(() => {
+    it('sets the aria-describedby to reference hints and errors when in error state', fakeAsync(() => {
       let hintId = fixture.debugElement
         .query(By.css('.mat-mdc-form-field-hint'))!
         .nativeElement.getAttribute('id');
@@ -1157,7 +1177,7 @@ describe('MatMdcInput with forms', () => {
       describedBy = inputEl.getAttribute('aria-describedby');
 
       expect(errorIds).withContext('errors should be shown').toBeTruthy();
-      expect(describedBy).toBe(errorIds);
+      expect(describedBy).toBe(`${hintId} ${errorIds}`);
     }));
 
     it('should set `aria-invalid` to true if the input is empty', fakeAsync(() => {

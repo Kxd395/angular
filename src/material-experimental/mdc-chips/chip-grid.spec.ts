@@ -938,7 +938,16 @@ describe('MDC-based MatChipGrid', () => {
         expect(containerEl.querySelectorAll('mat-error').length)
           .withContext('Expected one error message to have been rendered.')
           .toBe(1);
-        expect(containerEl.querySelectorAll('mat-hint').length)
+        let hintWrapper = containerEl.querySelector('.mat-mdc-form-field-hint-wrapper') as Element;
+        expect(hintWrapper.classList)
+          .withContext('Expected hint wrapper to not have active class.')
+          .not.toContain('mat-mdc-form-field-hint-wrapper-active');
+        expect(getComputedStyle(hintWrapper).display)
+          .withContext('Expected hint wrapper to not be displayed.')
+          .toBe('none');
+        expect(
+          containerEl.querySelectorAll('.mat-mdc-form-field-hint-wrapper-active mat-hint').length,
+        )
           .withContext('Expected no hints to be shown.')
           .toBe(0);
 
@@ -954,7 +963,16 @@ describe('MDC-based MatChipGrid', () => {
           expect(containerEl.querySelectorAll('mat-error').length)
             .withContext('Expected no error messages when the input is valid.')
             .toBe(0);
-          expect(containerEl.querySelectorAll('mat-hint').length)
+          hintWrapper = containerEl.querySelector('.mat-mdc-form-field-hint-wrapper') as Element;
+          expect(hintWrapper.classList)
+            .withContext('Expected hint wrapper to have active class.')
+            .toContain('mat-mdc-form-field-hint-wrapper-active');
+          expect(getComputedStyle(hintWrapper).display)
+            .withContext('Expected hint wrapper to be displayed.')
+            .not.toBe('none');
+          expect(
+            containerEl.querySelectorAll('.mat-mdc-form-field-hint-wrapper-active mat-hint').length,
+          )
             .withContext('Expected one hint to be shown once the input is valid.')
             .toBe(1);
         });
@@ -970,7 +988,7 @@ describe('MDC-based MatChipGrid', () => {
       expect(containerEl.querySelector('mat-error')!.getAttribute('aria-live')).toBe('polite');
     });
 
-    it('sets the aria-describedby on the input to reference errors when in error state', fakeAsync(() => {
+    it('sets the aria-describedby on the input to reference hints and errors when in error state', fakeAsync(() => {
       let hintId = fixture.debugElement
         .query(By.css('.mat-mdc-form-field-hint'))!
         .nativeElement.getAttribute('id');
@@ -993,7 +1011,7 @@ describe('MDC-based MatChipGrid', () => {
       let errorDescribedBy = inputEl.getAttribute('aria-describedby');
 
       expect(errorIds).withContext('errors should be shown').toBeTruthy();
-      expect(errorDescribedBy).toBe(errorIds);
+      expect(errorDescribedBy).toBe(`${hintId} ${errorIds}`);
     }));
   });
 
