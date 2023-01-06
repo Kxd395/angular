@@ -31,7 +31,7 @@ import {FocusMonitor} from '@angular/cdk/a11y';
 import {MatChip, MatChipEvent} from './chip';
 import {MatChipEditInput} from './chip-edit-input';
 import {takeUntil} from 'rxjs/operators';
-import {MAT_CHIP} from './tokens';
+import {MAT_CHIP, MAT_CHIPS_DEFAULT_OPTIONS, MatChipsDefaultOptions} from './tokens';
 
 /** Represents an event fired on an individual `mat-chip` when it is edited. */
 export interface MatChipEditedEvent extends MatChipEvent {
@@ -111,6 +111,7 @@ export class MatChipRow extends MatChip implements AfterViewInit {
     @Inject(MAT_RIPPLE_GLOBAL_OPTIONS)
     globalRippleOptions?: RippleGlobalOptions,
     @Attribute('tabindex') tabIndex?: string,
+    @Optional() @Inject(MAT_CHIPS_DEFAULT_OPTIONS) _defaultOptions?: MatChipsDefaultOptions,
   ) {
     super(
       changeDetectorRef,
@@ -121,6 +122,7 @@ export class MatChipRow extends MatChip implements AfterViewInit {
       animationMode,
       globalRippleOptions,
       tabIndex,
+      _defaultOptions,
     );
 
     this.role = 'row';

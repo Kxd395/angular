@@ -1,10 +1,17 @@
 import {Directionality} from '@angular/cdk/bidi';
 import {Component, DebugElement, ViewChild} from '@angular/core';
 import {waitForAsync, ComponentFixture, TestBed} from '@angular/core/testing';
-import {MatRipple} from '@angular/material/core';
+import {MatRipple, ThemePalette} from '@angular/material/core';
 import {By} from '@angular/platform-browser';
 import {Subject} from 'rxjs';
-import {MatChip, MatChipEvent, MatChipSet, MatChipsModule} from './index';
+import {
+  MAT_CHIPS_DEFAULT_OPTIONS,
+  MatChip,
+  MatChipEvent,
+  MatChipsDefaultOptions,
+  MatChipSet,
+  MatChipsModule,
+} from './index';
 
 describe('MDC-based MatChip', () => {
   let fixture: ComponentFixture<any>;
@@ -79,6 +86,34 @@ describe('MDC-based MatChip', () => {
       expect(chipRippleInstance.disabled)
         .withContext('Expected basic chip ripples to be disabled.')
         .toBe(true);
+    });
+
+    it('can default the color via MAT_CHIPS_DEFAULT_OPTIONS provider', () => {
+      fixture = TestBed.createComponent(BasicChip);
+      fixture.detectChanges();
+      chipDebugElement = fixture.debugElement.query(By.directive(MatChip))!;
+      chipNativeElement = chipDebugElement.nativeElement;
+      expect(chipNativeElement.classList).toContain('mat-primary');
+
+      fixture.destroy();
+
+      TestBed.resetTestingModule()
+        .configureTestingModule({
+          imports: [MatChipsModule],
+          declarations: [BasicChip],
+          providers: [
+            {
+              provide: MAT_CHIPS_DEFAULT_OPTIONS,
+              useValue: {color: undefined} as MatChipsDefaultOptions,
+            },
+          ],
+        })
+        .compileComponents();
+      fixture = TestBed.createComponent(BasicChip);
+      fixture.detectChanges();
+      chipDebugElement = fixture.debugElement.query(By.directive(MatChip))!;
+      chipNativeElement = chipDebugElement.nativeElement;
+      expect(chipNativeElement.classList).not.toContain('mat-primary');
     });
   });
 
@@ -205,7 +240,7 @@ class SingleChip {
   @ViewChild(MatChipSet) chipList: MatChipSet;
   disabled: boolean = false;
   name: string = 'Test';
-  color: string = 'primary';
+  color: ThemePalette = 'primary';
   removable: boolean = true;
   shouldShow: boolean = true;
   value: any;
