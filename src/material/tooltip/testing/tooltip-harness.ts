@@ -7,7 +7,6 @@
  */
 
 import {
-  AsyncFactoryFn,
   ComponentHarness,
   ComponentHarnessConstructor,
   HarnessPredicate,
@@ -16,7 +15,6 @@ import {
 import {TooltipHarnessFilters} from './tooltip-harness-filters';
 
 export abstract class _MatTooltipHarnessBase extends ComponentHarness {
-  protected abstract _optionalPanel: AsyncFactoryFn<TestElement | null>;
   protected abstract _hiddenClass: string;
   protected abstract _showAnimationName: string;
   protected abstract _hideAnimationName: string;
@@ -30,7 +28,7 @@ export abstract class _MatTooltipHarnessBase extends ComponentHarness {
     // element has ripples.
     await host.dispatchEvent('touchstart', {changedTouches: []});
     await host.hover();
-    const panel = await this._optionalPanel();
+    const panel = await this._getPanel();
     await panel?.dispatchEvent('animationend', {animationName: this._showAnimationName});
   }
 
@@ -42,27 +40,32 @@ export abstract class _MatTooltipHarnessBase extends ComponentHarness {
     // the tooltip binds different events depending on the device.
     await host.dispatchEvent('touchend');
     await host.mouseAway();
-    const panel = await this._optionalPanel();
+    const panel = await this._getPanel();
     await panel?.dispatchEvent('animationend', {animationName: this._hideAnimationName});
   }
 
   /** Gets whether the tooltip is open. */
   async isOpen(): Promise<boolean> {
-    const panel = await this._optionalPanel();
+    const panel = await this._getPanel();
     return !!panel && !(await panel.hasClass(this._hiddenClass));
   }
 
   /** Gets a promise for the tooltip panel's text. */
   async getTooltipText(): Promise<string> {
-    const panel = await this._optionalPanel();
+    const panel = await this._getPanel();
     return panel ? panel.text() : '';
+  }
+
+  /** Gets the tooltip panel associated with the trigger. */
+  private async _getPanel(): Promise<TestElement | null> {
+    const host = await this.host();
+    const locatorFactory = this.documentRootLocatorFactory();
+    return locatorFactory.locatorForOptional(`#${await host.getAttribute('data-mat-tooltip')}`)();
   }
 }
 
 /** Harness for interacting with a standard mat-tooltip in tests. */
 export class MatTooltipHarness extends _MatTooltipHarnessBase {
-  protected _optionalPanel =
-    this.documentRootLocatorFactory().locatorForOptional('.mat-mdc-tooltip');
   static hostSelector = '.mat-mdc-tooltip-trigger';
   protected _hiddenClass = 'mat-mdc-tooltip-hide';
   protected _showAnimationName = 'mat-mdc-tooltip-show';

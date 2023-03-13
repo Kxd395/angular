@@ -49,6 +49,8 @@ import {
   exportAs: 'matTooltip',
   host: {
     'class': 'mat-tooltip-trigger',
+    // Used by harnesses to match the trigger to its tooltip.
+    '[attr.data-mat-tooltip]': '_panelId',
   },
 })
 export class MatLegacyTooltip extends _MatTooltipBase<LegacyTooltipComponent> {
@@ -102,6 +104,7 @@ export class MatLegacyTooltip extends _MatTooltipBase<LegacyTooltipComponent> {
     // won't be rendered if the animations are disabled or there is no web animations polyfill.
     '[style.zoom]': 'isVisible() ? 1 : null',
     '(mouseleave)': '_handleMouseLeave($event)',
+    '[attr.id]': '_id',
     'aria-hidden': 'true',
   },
 })
