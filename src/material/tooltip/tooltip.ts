@@ -161,6 +161,7 @@ const MIN_VIEWPORT_TOOLTIP_THRESHOLD = 8;
 const UNBOUNDED_ANCHOR_GAP = 8;
 const MIN_HEIGHT = 24;
 const MAX_WIDTH = 200;
+let uniqueId = 0;
 
 @Directive()
 export abstract class _MatTooltipBase<T extends _TooltipComponentBase>
@@ -181,6 +182,7 @@ export abstract class _MatTooltipBase<T extends _TooltipComponentBase>
   protected _viewportMargin = 8;
   private _currentPosition: TooltipPosition;
   protected readonly _cssClassPrefix: string = 'mat';
+  readonly _panelId = `mat-tooltip-panel-${uniqueId++}`;
 
   /** Allows the user to define the position of the tooltip relative to the parent element */
   @Input('matTooltipPosition')
@@ -429,6 +431,7 @@ export abstract class _MatTooltipBase<T extends _TooltipComponentBase>
     const instance = (this._tooltipInstance = overlayRef.attach(this._portal).instance);
     instance._triggerElement = this._elementRef.nativeElement;
     instance._mouseLeaveHideDelay = this._hideDelay;
+    instance._id = this._panelId;
     instance
       .afterHidden()
       .pipe(takeUntil(this._destroyed))
@@ -855,6 +858,8 @@ export abstract class _MatTooltipBase<T extends _TooltipComponentBase>
   exportAs: 'matTooltip',
   host: {
     'class': 'mat-mdc-tooltip-trigger',
+    // Used by harnesses to match the trigger to its tooltip.
+    '[attr.data-mat-tooltip]': '_panelId',
   },
 })
 export class MatTooltip extends _MatTooltipBase<TooltipComponent> {
@@ -929,6 +934,9 @@ export abstract class _TooltipComponentBase implements OnDestroy {
 
   /** Amount of milliseconds to delay the closing sequence. */
   _mouseLeaveHideDelay: number;
+
+  /** Unique ID for the panel. Assigned by the trigger. */
+  _id: string | undefined;
 
   /** Whether animations are currently disabled. */
   private _animationsDisabled: boolean;
@@ -1124,6 +1132,7 @@ export abstract class _TooltipComponentBase implements OnDestroy {
     // won't be rendered if the animations are disabled or there is no web animations polyfill.
     '[style.zoom]': 'isVisible() ? 1 : null',
     '(mouseleave)': '_handleMouseLeave($event)',
+    '[attr.id]': '_id',
     'aria-hidden': 'true',
   },
 })

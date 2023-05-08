@@ -105,6 +105,8 @@ export abstract class _MatTooltipBase<T extends _TooltipComponentBase> implement
     ngOnDestroy(): void;
     // (undocumented)
     _overlayRef: OverlayRef | null;
+    // (undocumented)
+    readonly _panelId: string;
     get position(): TooltipPosition;
     set position(value: TooltipPosition);
     // (undocumented)
@@ -195,6 +197,7 @@ export abstract class _TooltipComponentBase implements OnDestroy {
     _handleMouseLeave({ relatedTarget }: MouseEvent): void;
     hide(delay: number): void;
     protected abstract readonly _hideAnimation: string;
+    _id: string | undefined;
     isVisible(): boolean;
     _markForCheck(): void;
     message: string;
