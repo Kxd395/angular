@@ -17,7 +17,6 @@ import {
   TemplateRef,
   ViewChild,
   ViewContainerRef,
-  ComponentFactoryResolver,
   NgZone,
   ViewEncapsulation,
   Injectable,
@@ -812,21 +811,6 @@ describe('MatDialog', () => {
     dialog.open(PizzaMsg, {scrollStrategy});
     expect(scrollStrategy.enable).toHaveBeenCalled();
   }));
-
-  it('should be able to pass in an alternate ComponentFactoryResolver', inject(
-    [ComponentFactoryResolver],
-    (resolver: ComponentFactoryResolver) => {
-      spyOn(resolver, 'resolveComponentFactory').and.callThrough();
-
-      dialog.open(PizzaMsg, {
-        viewContainerRef: testViewContainerRef,
-        componentFactoryResolver: resolver,
-      });
-      viewContainerFixture.detectChanges();
-
-      expect(resolver.resolveComponentFactory).toHaveBeenCalled();
-    },
-  ));
 
   describe('passing in data', () => {
     it('should be able to pass in data', () => {
