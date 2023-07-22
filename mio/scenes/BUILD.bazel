@@ -1,0 +1,13 @@
+load("//mio:defs.bzl", "ng_app")
+
+package(default_visibility = ["//visibility:public"])
+
+# The application
+ng_app(
+    name = "scenes",
+    deps = [
+      "//mio:node_modules/@angular/components-examples",
+      "//mio:node_modules/@stackblitz/sdk",
+      "//mio:node_modules/moment",
+    ],
+)
