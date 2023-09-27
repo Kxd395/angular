@@ -146,7 +146,7 @@ export class NativeDateAdapter extends DateAdapter<Date> {
       return new Date(value);
     }
 
-    const dateParts = (value as string)
+    const dateParts = value
       .trim()
       .split(DATE_COMPONENT_SEPARATOR_REGEX)
       .map(part => parseInt(part, 10))
@@ -191,13 +191,14 @@ export class NativeDateAdapter extends DateAdapter<Date> {
       }
     }
 
-    if (
-      year !== null &&
-      month !== null &&
-      day !== null &&
-      this._dateComponentsAreValid(year, month, day)
-    ) {
-      return this.createDate(year, month, day);
+    if (year !== null && month !== null && day !== null) {
+      const date = this.createDate(year, month, day);
+
+      if (date.getFullYear() === year && date.getMonth() === month && date.getDate() === day) {
+        return date;
+      }
+
+      return this.invalid();
     }
 
     return this._nativeParseFallback(value);
@@ -347,22 +348,5 @@ export class NativeDateAdapter extends DateAdapter<Date> {
       date.getUTCSeconds(),
       date.getUTCMilliseconds(),
     );
-  }
-
-  private _dateComponentsAreValid(year: number, month: number, day: number) {
-    if (year < 0 || year > 9999 || month < 0 || month > 11 || day < 1 || day > 31) {
-      return false;
-    }
-
-    if (month === 1) {
-      const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
-      return isLeapYear ? day <= 29 : day <= 28;
-    }
-
-    if (month === 3 || month === 5 || month === 8 || month === 10) {
-      return day <= 30;
-    }
-
-    return true;
   }
 }
