@@ -1504,6 +1504,8 @@ class SimpleCdkTreeApp {
 @Component({
   template: `
     <cdk-tree [dataSource]="dataSource" [levelAccessor]="getLevel">
+    <cdk-tree [dataSource]="dataSource" [levelAccessor]="getLevel"
+        nodeType="flat">
       @if (true) {
         <cdk-tree-node *cdkTreeNodeDef="let node" class="customNodeClass"
                       cdkTreeNodePadding [cdkTreeNodePaddingIndent]="indent"
@@ -1627,8 +1629,12 @@ class CdkTreeAppWithToggle {
                             cdkTreeNodeToggle
                             [cdkTreeNodeToggleRecursive]="toggleRecursively">
                      {{node.pizzaTopping}} - {{node.pizzaCheese}} + {{node.pizzaBase}}
+<<<<<<< HEAD
         @if (tree.isExpanded(node)) {
 <div>
+=======
+        <div *ngIf="tree.isExpanded(node)">
+>>>>>>> e20bac882 (fix(material/tree): add levelAccessor, childrenAccessor, TreeKeyManager; a11y and docs improvements)
           <ng-template cdkTreeNodeOutlet></ng-template>
         </div>
 }
