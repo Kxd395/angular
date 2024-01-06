@@ -184,3 +184,8 @@
   $offset: calc(#{$border-width} + 3px);
   margin: calc(#{$offset} * -1);
 }
+
+// TODO(wagnermaciel): Remove this once typography tokens have landed.
+.mat-mdc-button-base.mat-mdc-button-base {
+  line-height: normal;
+}
