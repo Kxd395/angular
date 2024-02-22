@@ -103,6 +103,9 @@ export class MatExpansionPanel extends CdkAccordionItem implements AfterContentI
     readonly afterExpand: EventEmitter<void>;
     // (undocumented)
     _animationMode: string;
+    _animationsDisabled: boolean;
+    // (undocumented)
+    _animationStarted(): void;
     _body: ElementRef<HTMLElement>;
     readonly _bodyAnimationDone: Subject<AnimationEvent_2>;
     close(): void;
@@ -123,6 +126,7 @@ export class MatExpansionPanel extends CdkAccordionItem implements AfterContentI
     // (undocumented)
     ngOnDestroy(): void;
     open(): void;
+    _panelHidden: boolean;
     _portal: TemplatePortal;
     toggle(): void;
     get togglePosition(): MatAccordionTogglePosition;
