@@ -25,7 +25,6 @@ import {map} from 'rxjs/operators';
 import {CdkTreeModule, CdkTreeNodePadding} from './index';
 import {CdkTree, CdkTreeNode} from './tree';
 import {createKeyboardEvent} from '@angular/cdk/testing/testbed/fake-events';
-import {B, C, T} from '../keycodes';
 
 /**
  * This is a cloned version of `tree.spec.ts` that contains all the same tests,
@@ -789,7 +788,7 @@ describe('CdkTree', () => {
         (getNodes(treeElement)[1] as HTMLElement).click();
         fixture.detectChanges();
 
-        // NB: only four elements are present here; children are not present
+        // Note: only four elements are present here; children are not present
         // in DOM unless the parent node is expanded.
         expect(getNodes(treeElement).map(x => x.getAttribute('aria-expanded')))
           .withContext('aria-expanded attributes')
@@ -1305,7 +1304,9 @@ describe('CdkTree', () => {
       });
       describe(`when pressing 'b'`, () => {
         beforeEach(fakeAsync(() => {
-          component.tree.nativeElement.dispatchEvent(createKeyboardEvent('keydown', B));
+          component.tree.nativeElement.dispatchEvent(
+            createKeyboardEvent('keydown', undefined, 'b'),
+          );
           fixture.detectChanges();
           tick(1000);
         }));
@@ -1332,13 +1333,17 @@ describe('CdkTree', () => {
 
       describe(`when pressing 'b'`, () => {
         beforeEach(fakeAsync(() => {
-          component.tree.nativeElement.dispatchEvent(createKeyboardEvent('keydown', B));
+          component.tree.nativeElement.dispatchEvent(
+            createKeyboardEvent('keydown', undefined, 'b'),
+          );
           fixture.detectChanges();
           tick(1000);
         }));
 
         it('focuses banana', fakeAsync(() => {
-          component.tree.nativeElement.dispatchEvent(createKeyboardEvent('keydown', B));
+          component.tree.nativeElement.dispatchEvent(
+            createKeyboardEvent('keydown', undefined, 'b'),
+          );
           fixture.detectChanges();
           tick(1000);
 
@@ -1350,7 +1355,9 @@ describe('CdkTree', () => {
 
       describe(`when pressing 'c'`, () => {
         beforeEach(fakeAsync(() => {
-          component.tree.nativeElement.dispatchEvent(createKeyboardEvent('keydown', C));
+          component.tree.nativeElement.dispatchEvent(
+            createKeyboardEvent('keydown', undefined, 'c'),
+          );
           fixture.detectChanges();
           tick(1000);
         }));
@@ -1363,7 +1370,9 @@ describe('CdkTree', () => {
 
       describe(`when pressing 't'`, () => {
         beforeEach(fakeAsync(() => {
-          component.tree.nativeElement.dispatchEvent(createKeyboardEvent('keydown', T));
+          component.tree.nativeElement.dispatchEvent(
+            createKeyboardEvent('keydown', undefined, 't'),
+          );
           fixture.detectChanges();
           tick(1000);
         }));
