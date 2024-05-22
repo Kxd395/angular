@@ -125,7 +125,7 @@ export class CdkTreeNode<T, K = T> implements FocusableOption, OnDestroy, OnInit
     protected _elementRef: ElementRef<HTMLElement>;
     focus(): void;
     // (undocumented)
-    get isExpanded(): boolean;
+    get isLeafNode(): boolean | null;
     // (undocumented)
     get level(): number;
     static mostRecentTreeNode: CdkTreeNode<any> | null;
