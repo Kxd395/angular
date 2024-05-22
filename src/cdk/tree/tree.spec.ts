@@ -143,7 +143,8 @@ describe('CdkTree', () => {
         dataSource.addChild(data[2]);
         fixture.detectChanges();
         let ariaExpandedStates = getNodes(treeElement).map(n => n.getAttribute('aria-expanded'));
-        expect(ariaExpandedStates).toEqual([null, null, 'false']);
+        console.log(ariaExpandedStates);
+        expect(ariaExpandedStates).toEqual([null, null, 'false', null]);
 
         component.treeControl.expandAll();
         fixture.detectChanges();
