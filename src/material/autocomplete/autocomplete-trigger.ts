@@ -31,6 +31,7 @@ import {
 import {DOCUMENT} from '@angular/common';
 import {Directionality} from '@angular/cdk/bidi';
 import {DOWN_ARROW, ENTER, ESCAPE, TAB, UP_ARROW, hasModifierKey} from '@angular/cdk/keycodes';
+import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import {_getEventTarget} from '@angular/cdk/platform';
 import {TemplatePortal} from '@angular/cdk/portal';
 import {ViewportRuler} from '@angular/cdk/scrolling';
@@ -139,6 +140,7 @@ export class MatAutocompleteTrigger
   private _scrollStrategy: () => ScrollStrategy;
   private _keydownSubscription: Subscription | null;
   private _outsideClickSubscription: Subscription | null;
+  private _handsetLandscapeBreakpointSubscription: Subscription | null;
 
   /** Old value of the native input. Used to work around issues with the `input` event on IE. */
   private _previousValue: string | number | null;
@@ -282,6 +284,7 @@ export class MatAutocompleteTrigger
       window.removeEventListener('blur', this._windowBlurHandler);
     }
 
+    this._handsetLandscapeBreakpointSubscription?.unsubscribe();
     this._viewportSubscription.unsubscribe();
     this._componentDestroyed = true;
     this._destroyPanel();
@@ -879,12 +882,34 @@ export class MatAutocompleteTrigger
     });
   }
 
+  /** Implements BreakpointObserver to be used to detect handset landscape */
+  private _breakpointObserver = inject(BreakpointObserver);
+
   private _getOverlayPosition(): PositionStrategy {
+    // Set default Overlay Position
     const strategy = this._overlay
       .position()
       .flexibleConnectedTo(this._getConnectedElement())
       .withFlexibleDimensions(false)
       .withPush(false);
+
+    if (!this._handsetLandscapeBreakpointSubscription) {
+      // Subscribe to the breakpoint events stream to detect when screen is in
+      // handsetLandscape. Only subscribe if/when this panel is open.
+      // BreakpointObserver only returns screen size or isMatched/matches boolean.
+      this._handsetLandscapeBreakpointSubscription = this._breakpointObserver
+        .observe(Breakpoints.HandsetLandscape)
+        .subscribe(result => {
+          // Check breakpoint if being viewed in HandsetLandscape via subscription (if not null)
+          const isHandsetLandscape = result.matches;
+          // Apply HandsetLandscape settings to prevent overlay cutoff in that breakpoint
+          // Fixes b/284148377
+          if (isHandsetLandscape) {
+            strategy.withFlexibleDimensions(true).withGrowAfterOpen(true).withViewportMargin(8);
+          }
+          return;
+        });
+    }
 
     this._setStrategyPositions(strategy);
     this._positionStrategy = strategy;
